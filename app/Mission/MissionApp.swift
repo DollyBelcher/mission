@@ -6,12 +6,15 @@
 //
 
 import SwiftUI
+import Firebase
 
+// The main app struct
 @main
 struct MissionApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            HomeView()
         }
     }
 }
+
