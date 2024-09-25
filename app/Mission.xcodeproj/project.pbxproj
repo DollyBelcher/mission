@@ -14,6 +14,7 @@
 		A534A1602CA323000093541E /* MissionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A534A15F2CA323000093541E /* MissionTests.swift */; };
 		A534A16A2CA323000093541E /* MissionUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A534A1692CA323000093541E /* MissionUITests.swift */; };
 		A534A16C2CA323000093541E /* MissionUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A534A16B2CA323000093541E /* MissionUITestsLaunchTests.swift */; };
+		F05794F52CA47CB20044095F /* TaskViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F05794F42CA47CAD0044095F /* TaskViewModel.swift */; };
 		F0F79F222CA450FF0063415B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = F0F79F212CA450FF0063415B /* GoogleService-Info.plist */; };
 		F0F79F232CA450FF0063415B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = F0F79F212CA450FF0063415B /* GoogleService-Info.plist */; };
 		F0F79F242CA450FF0063415B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = F0F79F212CA450FF0063415B /* GoogleService-Info.plist */; };
@@ -71,6 +72,7 @@
 		A534A1652CA323000093541E /* MissionUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MissionUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A534A1692CA323000093541E /* MissionUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MissionUITests.swift; sourceTree = "<group>"; };
 		A534A16B2CA323000093541E /* MissionUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MissionUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		F05794F42CA47CAD0044095F /* TaskViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskViewModel.swift; sourceTree = "<group>"; };
 		F0F79F212CA450FF0063415B /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -146,6 +148,7 @@
 		A534A14C2CA322FE0093541E /* Mission */ = {
 			isa = PBXGroup;
 			children = (
+				F05794F42CA47CAD0044095F /* TaskViewModel.swift */,
 				A534A14D2CA322FE0093541E /* MissionApp.swift */,
 				A534A14F2CA322FE0093541E /* ContentView.swift */,
 				A534A1512CA323000093541E /* Assets.xcassets */,
@@ -317,6 +320,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A534A1502CA322FE0093541E /* ContentView.swift in Sources */,
+				F05794F52CA47CB20044095F /* TaskViewModel.swift in Sources */,
 				A534A14E2CA322FE0093541E /* MissionApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

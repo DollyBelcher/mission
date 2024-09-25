@@ -8,13 +8,21 @@
 import SwiftUI
 import Firebase
 
-// The main app struct
 @main
 struct MissionApp: App {
+    // Initialize Firebase in the initializer
+    init() {
+        FirebaseApp.configure()
+    }
+
     var body: some Scene {
         WindowGroup {
-            HomeView()
+            NavigationView {
+                HomeView() // This will be the main content of your app
+            }
         }
     }
 }
 
+
+ 

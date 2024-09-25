@@ -40,43 +40,45 @@ struct HomeView: View {
     }
 }
 
-// This is the second view that shows the text 'Laugh loudly'
+
+
 struct TaskView: View {
-    
-    // List of possible tasks
-    let tasks = [
-        "Laugh loudly",
-        "Run in place for 30 seconds",
-        "Dance for 1 minute",
-        "Do 10 push-ups",
-        "Sing a song"
-    ]
-    
-    // Track the selected task and retry count
-    @State private var selectedTask: String = ""
-    @State private var retryCount: Int = 0
-    @Environment(\.presentationMode) var presentationMode // To return to the home view
-    
+    @StateObject private var taskViewModel = TaskViewModel()  // Create the TaskViewModel to fetch tasks
+    @State private var currentTaskIndex: Int = 0  // Tracks which task to show
+    @State private var retryCount: Int = 0  // Tracks retry attempts
+    @Environment(\.presentationMode) var presentationMode  // To return to the home view
+
     var body: some View {
         VStack {
-            Text(selectedTask)
-                .font(.largeTitle)
-                .fontWeight(.semibold)
-                .padding()
-            
-            Spacer() // Push content up to leave space for the button at the bottom
-            
+            // Display the fetched task's name or a default message
+            if taskViewModel.tasks.indices.contains(currentTaskIndex) {
+                Text("Task: \(taskViewModel.tasks[currentTaskIndex])")
+                    .font(.largeTitle)
+                    .fontWeight(.semibold)
+                    .padding()
+            } else {
+                Text("Fetching Task...")
+                    .font(.largeTitle)
+                    .fontWeight(.semibold)
+                    .padding()
+            }
+
+            Spacer()  // Push content up to leave space for the button at the bottom
+
             // Retry button with retry count in the bottom-right corner
             HStack {
-                Spacer() // Push the button to the right
-                
+                Spacer()  // Push the button to the right
+
                 if retryCount < 3 {
                     Button(action: {
-                        selectRandomTask()
+                        if currentTaskIndex < taskViewModel.tasks.count - 1 {
+                            currentTaskIndex += 1  // Show the next task
+                        }
+                        retryCount += 1
                     }) {
                         HStack {
-                            Image(systemName: "arrow.clockwise") // Icon from SF Symbols
-                            Text("\(retryCount + 1)/3") // Display retry count
+                            Image(systemName: "arrow.clockwise")  // Icon from SF Symbols
+                            Text("\(retryCount + 1)/3")  // Display retry count
                         }
                         .font(.headline)
                         .foregroundColor(.white)
@@ -90,7 +92,7 @@ struct TaskView: View {
                         presentationMode.wrappedValue.dismiss()
                     }) {
                         HStack {
-                            Image(systemName: "house.fill") // Icon for returning home
+                            Image(systemName: "house.fill")  // Icon for returning home
                             Text("Return to Home")
                         }
                         .font(.headline)
@@ -101,19 +103,14 @@ struct TaskView: View {
                     }
                 }
             }
-            .padding() // Add some space from the edges
+            .padding()  // Add some space from the edges
         }
         .onAppear {
-            selectRandomTask()
+            taskViewModel.fetchThreeRandomTasks()  // Fetch three random tasks when the view appears
         }
     }
-    
-    // Function to select a random task and update retry count
-    func selectRandomTask() {
-        selectedTask = tasks.randomElement() ?? "No task available"
-        retryCount += 1
-    }
 }
+
 // Preview section for HomeView
 #Preview {
     HomeView()
