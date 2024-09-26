@@ -7,8 +7,12 @@
 import SwiftUI
 import UIKit
 
+let darksandybrown = Color(red: 234/255, green: 230/255, blue: 212/255)
+let lightsandybrown = Color(red: 244/255, green: 240/255, blue: 242/255)
+
 // This is the home view with 'MISSION' and a button 'Get Task'
 struct HomeView: View {
+    @State private var name: String = "" 
     var body: some View {
         NavigationView {
             VStack {
@@ -19,99 +23,138 @@ struct HomeView: View {
                     .font(.largeTitle)
                     .fontWeight(.bold)
                     .padding()
+                    .foregroundStyle(Color.black)
+                
                 Spacer()
+                
+                TextField("Enter your name", text: $name)
+                    .padding()
+                    .frame(height: UIScreen.main.bounds.height * 0.05)
+                    .background(Color.white)
+                    .foregroundColor(Color.black)
+                    .font(.system(size: 20))
+                    .multilineTextAlignment(.center)
+                    .cornerRadius(10)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(Color.gray.opacity(0.5), lineWidth: 2)
+                    )
+                    .padding(.bottom, 40)
+                
                 Spacer()
-                    .frame(height: UIScreen.main.bounds.height * 0.2)
-                NavigationLink(destination: TaskView()) {
-                    Text("Get Task")
+                
+                NavigationLink(destination: StartGame(playerName: name)) {
+                    Text("Start Game")
                         .font(.headline)
-                        .foregroundColor(.white)
+                        .foregroundColor(.black)
                         .padding()
                         .frame(width: 200, height: 50)
-                        .background(Color.blue)
+                        .background(lightsandybrown)
                         .cornerRadius(10)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 13)
+                                .stroke(Color.gray, lineWidth: 2))
+                }
+                .simultaneousGesture(TapGesture().onEnded {
+                    // Save the entered name to UserDefaults when the button is tapped
+                    storeUserName()})
+                .padding(.bottom, 30)
+                
+                Spacer()
+                
+                NavigationLink(destination: StartGame(playerName: name)) {
+                    Text("Join Game")
+                        .font(.headline)
+                        .foregroundColor(.black)
+                        .padding()
+                        .frame(width: 200, height: 50)
+                        .background(lightsandybrown)
+                        .cornerRadius(10)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 13)
+                                .stroke(Color.gray, lineWidth: 2))
+                }
+                .simultaneousGesture(TapGesture().onEnded {
+                    // Save the entered name to UserDefaults when the button is tapped
+                    storeUserName()})
+                .padding(.bottom, 30)
+                
+                Spacer()
+                
+                NavigationLink(destination: HowToPlayView()) {
+                    Text("How To Play")
+                        .font(.headline)
+                        .foregroundColor(.black)
+                        .padding()
+                        .frame(width: 200, height: 50)
+                        .background(lightsandybrown)
+                        .cornerRadius(18)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 13)
+                                .stroke(Color.gray, lineWidth: 2))
                 }
                 
                 Spacer()
                 
                 .padding()
             }
+            .background(darksandybrown)
         }
     }
+
+
+    private func storeUserName() {
+        UserDefaults.standard.set(self.name, forKey: "userName")}
 }
 
-
-
-struct TaskView: View {
-    @StateObject private var taskViewModel = TaskViewModel()  // Create the TaskViewModel to fetch tasks
-    @State private var currentTaskIndex: Int = 0  // Tracks which task to show
-    @State private var retryCount: Int = 0  // Tracks retry attempts
-    @Environment(\.presentationMode) var presentationMode  // To return to the home view
+struct StartGame: View {
+    let playerName: String  // Player's name passed in from HomeView
+    
+    // Generate a unique game code
+    let gameCode = UUID().uuidString.prefix(6).uppercased()
 
     var body: some View {
         VStack {
-            // Display the fetched task's name or a default message
-            if taskViewModel.tasks.indices.contains(currentTaskIndex) {
-                Text("Task: \(taskViewModel.tasks[currentTaskIndex])")
-                    .font(.largeTitle)
-                    .fontWeight(.semibold)
+            Text("Welcome, \(playerName)")
+                .font(.title)
+                .padding()
+            
+            Text("Your Game Code is:")
+                .font(.headline)
+                .padding(.top, 20)
+
+            Text(gameCode)
+                .font(.system(size: 40, weight: .bold, design: .monospaced))
+                .padding()
+                .background(Color.yellow)
+                .cornerRadius(8)
+                .padding(.bottom, 40)
+
+            Text("Share this code with others to join your game.")
+                .font(.subheadline)
+                .padding()
+
+            Spacer()
+
+            Button(action: {
+                print("Quit Game")  // Placeholder for quit game action
+            }) {
+                Text("Quit Game")
+                    .font(.headline)
+                    .foregroundColor(.white)
                     .padding()
-            } else {
-                Text("Fetching Task...")
-                    .font(.largeTitle)
-                    .fontWeight(.semibold)
-                    .padding()
+                    .frame(width: 200, height: 50)
+                    .background(Color.red)
+                    .cornerRadius(10)
             }
-
-            Spacer()  // Push content up to leave space for the button at the bottom
-
-            // Retry button with retry count in the bottom-right corner
-            HStack {
-                Spacer()  // Push the button to the right
-
-                if retryCount < 3 {
-                    Button(action: {
-                        if currentTaskIndex < taskViewModel.tasks.count - 1 {
-                            currentTaskIndex += 1  // Show the next task
-                        }
-                        retryCount += 1
-                    }) {
-                        HStack {
-                            Image(systemName: "arrow.clockwise")  // Icon from SF Symbols
-                            Text("\(retryCount + 1)/3")  // Display retry count
-                        }
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .padding()
-                        .background(Color.orange)
-                        .cornerRadius(10)
-                    }
-                } else {
-                    Button(action: {
-                        // Return to the home screen after 3 retries
-                        presentationMode.wrappedValue.dismiss()
-                    }) {
-                        HStack {
-                            Image(systemName: "house.fill")  // Icon for returning home
-                            Text("Return to Home")
-                        }
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .padding()
-                        .background(Color.red)
-                        .cornerRadius(10)
-                    }
-                }
-            }
-            .padding()  // Add some space from the edges
+            
+            Spacer()
         }
-        .onAppear {
-            taskViewModel.fetchThreeRandomTasks()  // Fetch three random tasks when the view appears
-        }
+        .padding()
     }
 }
 
-// Preview section for HomeView
 #Preview {
     HomeView()
 }
+
