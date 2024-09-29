@@ -80,7 +80,7 @@ struct HowToPlayView: View {
             Spacer() // Pushes content up to avoid touching the bottom
         }
         .padding() // Adds padding around the entire view
-        .navigationBarTitle("How to Play", displayMode: .inline) // Optional Navigation Bar Title
+        .navigationTitle("How to Play") // Optional Navigation Bar Title
         .background(Color.black)
     }
 }
