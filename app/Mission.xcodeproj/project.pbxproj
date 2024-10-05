@@ -14,6 +14,7 @@
 		A534A1602CA323000093541E /* MissionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A534A15F2CA323000093541E /* MissionTests.swift */; };
 		A534A16A2CA323000093541E /* MissionUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A534A1692CA323000093541E /* MissionUITests.swift */; };
 		A534A16C2CA323000093541E /* MissionUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A534A16B2CA323000093541E /* MissionUITestsLaunchTests.swift */; };
+		F04E2CD42CB16665004BE9B0 /* FirebaseHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = F04E2CD32CB1665F004BE9B0 /* FirebaseHelper.swift */; };
 		F05794F52CA47CB20044095F /* TaskViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F05794F42CA47CAD0044095F /* TaskViewModel.swift */; };
 		F05794F72CA543E80044095F /* HowToPlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = F05794F62CA543DF0044095F /* HowToPlay.swift */; };
 		F05794FC2CA5D9070044095F /* GameViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F05794FB2CA5D9020044095F /* GameViewModel.swift */; };
@@ -74,6 +75,7 @@
 		A534A1652CA323000093541E /* MissionUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MissionUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A534A1692CA323000093541E /* MissionUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MissionUITests.swift; sourceTree = "<group>"; };
 		A534A16B2CA323000093541E /* MissionUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MissionUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		F04E2CD32CB1665F004BE9B0 /* FirebaseHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseHelper.swift; sourceTree = "<group>"; };
 		F05794F42CA47CAD0044095F /* TaskViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskViewModel.swift; sourceTree = "<group>"; };
 		F05794F62CA543DF0044095F /* HowToPlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HowToPlay.swift; sourceTree = "<group>"; };
 		F05794FA2CA54A3F0044095F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -153,6 +155,7 @@
 		A534A14C2CA322FE0093541E /* Mission */ = {
 			isa = PBXGroup;
 			children = (
+				F04E2CD32CB1665F004BE9B0 /* FirebaseHelper.swift */,
 				F05794FB2CA5D9020044095F /* GameViewModel.swift */,
 				F05794FA2CA54A3F0044095F /* Info.plist */,
 				F05794F62CA543DF0044095F /* HowToPlay.swift */,
@@ -331,6 +334,7 @@
 				F05794F72CA543E80044095F /* HowToPlay.swift in Sources */,
 				F05794F52CA47CB20044095F /* TaskViewModel.swift in Sources */,
 				F05794FC2CA5D9070044095F /* GameViewModel.swift in Sources */,
+				F04E2CD42CB16665004BE9B0 /* FirebaseHelper.swift in Sources */,
 				A534A14E2CA322FE0093541E /* MissionApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -517,7 +521,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = DollyBelcher.Mission;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -557,7 +562,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = DollyBelcher.Mission;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

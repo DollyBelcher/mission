@@ -7,7 +7,9 @@
 import SwiftUI
 import Firebase
 import FirebaseDatabase
-import UserNotifications  // For local notifications
+import UserNotifications
+import UIKit
+
 
 
 let darksandybrown = Color(red: 234/255, green: 230/255, blue: 212/255)
@@ -15,12 +17,11 @@ let lightsandybrown = Color(red: 244/255, green: 240/255, blue: 242/255)
 
 struct HomeView: View {
     @State private var name: String = ""
-    @State private var showError: Bool = false
     @State private var gameCode: String? = nil // Store generated game code
-    @State private var isNavigating: Bool = false // Control navigation to StartGameView
+    @State private var path = NavigationPath() // Manage the navigation stack
 
     var body: some View {
-        NavigationView {
+        NavigationStack(path: $path) {  // NavigationStack is the new way for navigation in iOS 16+
             VStack {
                 Spacer()
                     .frame(height: UIScreen.main.bounds.height * 0.25)
@@ -33,7 +34,6 @@ struct HomeView: View {
 
                 Spacer()
 
-                // TextField for entering player's name
                 TextField("Enter your name", text: $name)
                     .padding()
                     .frame(height: UIScreen.main.bounds.height * 0.05)
@@ -42,121 +42,38 @@ struct HomeView: View {
                     .font(.system(size: 20))
                     .multilineTextAlignment(.center)
                     .cornerRadius(10)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 10)
-                            .stroke(Color.gray.opacity(0.5), lineWidth: 2)
-                    )
                     .padding(.bottom, 40)
 
                 Spacer()
 
                 // Start Game Button
                 Button(action: {
-                    if name.isEmpty {
-                        showError = true // Show error if name is empty
-                    } else {
-                        generateGameCodeAndCreateGame() // Generate game code and create game
-                    }
+                    generateGameCodeAndNavigate()
                 }) {
                     Text("Start Game")
                         .font(.headline)
                         .foregroundColor(.black)
                         .padding()
                         .frame(width: 200, height: 50)
-                        .background(lightsandybrown)
+                        .background(Color.green)
                         .cornerRadius(10)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 13)
-                                .stroke(Color.gray, lineWidth: 2)
-                        )
-                }
-                .alert(isPresented: $showError) {
-                    Alert(title: Text("Error"), message: Text("Player name cannot be empty."), dismissButton: .default(Text("OK")))
-                }
-                .padding(.bottom, 30)
-
-                // Programmatic Navigation to StartGameView
-                NavigationLink(destination: StartGameView(playerName: name, gameCode: gameCode ?? ""),
-                               isActive: $isNavigating) {
-                    EmptyView() // Navigation happens programmatically
                 }
 
                 Spacer()
-
-                // Navigation to JoinGameView, passing player name
-                NavigationLink(destination: JoinGameView(playerName: name)) {
-                    Text("Join Game")
-                        .font(.headline)
-                        .foregroundColor(.black)
-                        .padding()
-                        .frame(width: 200, height: 50)
-                        .background(lightsandybrown)
-                        .cornerRadius(10)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 13)
-                                .stroke(Color.gray, lineWidth: 2)
-                        )
-                }
-                .simultaneousGesture(TapGesture().onEnded {
-                    storeUserName()
-                })
-                .padding(.bottom, 30)
-
-                Spacer()
-
-                // How to Play Button
-                NavigationLink(destination: HowToPlayView()) {
-                    Text("How To Play")
-                        .font(.headline)
-                        .foregroundColor(.black)
-                        .padding()
-                        .frame(width: 200, height: 50)
-                        .background(lightsandybrown)
-                        .cornerRadius(18)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 13)
-                                .stroke(Color.gray, lineWidth: 2)
-                        )
-                }
-
-                Spacer()
-                    .padding()
             }
-            .background(darksandybrown)
+            // Navigation destination based on the value pushed onto the navigation stack
+            .navigationDestination(for: String.self) { gameCode in
+                StartGameView(playerName: name, gameCode: gameCode)
+            }
+            .padding()
         }
     }
 
-    // Function to generate a game code and create a game in Firebase
-    private func generateGameCodeAndCreateGame() {
+    // Function to generate a game code and navigate to the next view
+    private func generateGameCodeAndNavigate() {
         let gameCode = generateGameCode()
-        self.gameCode = gameCode  // Save the generated game code
-
-        // Firebase reference
-        let ref = Database.database().reference().child("games").child(gameCode)
-
-        // Game data to be saved
-        let gameData: [String: Any] = [
-            "gameCode": gameCode,
-            "host": name,
-            "gameState": "waiting",  // Initial game state
-            "players": [
-                name: [
-                    "name": name,
-                    "tasks": []  // Empty tasks at the beginning
-                ]
-            ]
-        ]
-
-        // Write the game data to Firebase
-        ref.setValue(gameData) { error, ref in
-            if let error = error {
-                print("Error creating game: \(error.localizedDescription)")
-            } else {
-                print("Game successfully created with code: \(gameCode)")
-                // After successfully creating the game, trigger the navigation
-                isNavigating = true
-            }
-        }
+        self.gameCode = gameCode
+        self.path.append(gameCode)  // Push gameCode onto the navigation stack
     }
 
     // Function to generate a random 6-character game code
@@ -169,10 +86,6 @@ struct HomeView: View {
     }
 }
 
-import SwiftUI
-import Firebase
-import FirebaseDatabase
-import UserNotifications  // For local notifications
 
 struct StartGameView: View {
     let playerName: String  // Passed from HomeView
@@ -180,97 +93,112 @@ struct StartGameView: View {
     @State private var players: [String] = [] // List of player names in the game
     @State private var gameTime: String = ""  // Input for the game time in minutes
     @State private var gameState: String = "waiting" // Track the game state
-    @State private var isNavigating: Bool = false // Navigate to countdown
     @State private var timerActive: Bool = false  // Track if the timer is active
+    @State private var showError: Bool = false  // Handle errors
+    @State private var errorMessage: String? = nil  // Error message
+    @State private var path = NavigationPath() // Manage the navigation stack
 
     var body: some View {
-        VStack {
-            // Display the game code
-            Text("Game Code: \(gameCode)")
-                .font(.system(size: 30, weight: .bold, design: .monospaced))
-                .padding()
-                .background(Color.yellow)
-                .cornerRadius(8)
-                .padding(.bottom, 40)
-
-            Text("Welcome, \(playerName)")
-                .font(.title)
-                .padding(.bottom, 20)
-
-            // Input for game time in minutes
-            if !timerActive {
-                TextField("Enter game time (minutes)", text: $gameTime)
+        NavigationStack(path: $path) { // Use NavigationStack instead of NavigationView
+            VStack {
+                // Display the game code
+                Text("Game Code: \(gameCode)")
+                    .font(.system(size: 30, weight: .bold, design: .monospaced))
                     .padding()
-                    .frame(height: 50)
-                    .background(Color.white)
-                    .cornerRadius(10)
+                    .background(Color.yellow)
+                    .cornerRadius(8)
+                    .padding(.bottom, 40)
+
+                Text("Welcome, \(playerName)")
+                    .font(.title)
                     .padding(.bottom, 20)
-            }
 
-            // Display the real-time list of players
-            Text("Players:")
-                .font(.headline)
-                .padding(.bottom, 10)
-
-            if !players.isEmpty {
-                ForEach(players, id: \.self) { player in
-                    Text(player)
-                        .font(.body)
-                        .padding(.vertical, 5)
-                        .frame(maxWidth: .infinity)
-                        .background(Color.blue.opacity(0.2))
-                        .cornerRadius(8)
-                        .padding(.horizontal)
-                }
-            } else {
-                Text("No players have joined yet.")
-                    .foregroundColor(.gray)
-                    .padding(.bottom, 10)
-            }
-
-            Spacer()
-
-            // Start Game button (disabled if no time is entered)
-            if !timerActive {
-                Button(action: {
-                    startGame()
-                }) {
-                    Text("Start Game")
-                        .font(.headline)
-                        .foregroundColor(.white)
+                // Input for game time in minutes
+                if !timerActive {
+                    TextField("Enter game time (minutes)", text: $gameTime)
                         .padding()
-                        .frame(width: 200, height: 50)
-                        .background(gameTime.isEmpty ? Color.gray : Color.green)
+                        .frame(height: 50)
+                        .background(Color.white)
                         .cornerRadius(10)
+                        .padding(.bottom, 20)
                 }
-                .disabled(gameTime.isEmpty)  // Disable if no time is entered
-            }
 
-            Spacer()
+                // Display the real-time list of players
+                Text("Players:")
+                    .font(.headline)
+                    .padding(.bottom, 10)
 
-            // Programmatic navigation to GameCountdownView
-            NavigationLink(destination: GameCountdownView(gameCode: gameCode, gameTime: Int(gameTime) ?? 0),
-                           isActive: $isNavigating) {
-                EmptyView()
+                if !players.isEmpty {
+                    ForEach(players, id: \.self) { player in
+                        Text(player)
+                            .font(.body)
+                            .padding(.vertical, 5)
+                            .frame(maxWidth: .infinity)
+                            .background(Color.blue.opacity(0.2))
+                            .cornerRadius(8)
+                            .padding(.horizontal)
+                    }
+                } else {
+                    Text("No players have joined yet.")
+                        .foregroundColor(.gray)
+                        .padding(.bottom, 10)
+                }
+
+                Spacer()
+
+                // Start Game button (disabled if no time is entered)
+                if !timerActive {
+                    Button(action: {
+                        startGame()
+                    }) {
+                        Text("Start Game")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .padding()
+                            .frame(width: 200, height: 50)
+                            .background(gameTime.isEmpty ? Color.gray : Color.green)
+                            .cornerRadius(10)
+                    }
+                    .disabled(gameTime.isEmpty)  // Disable if no time is entered
+                }
+
+                Spacer()
             }
+            .navigationDestination(for: String.self) { gameCode in
+                GameCountdownView(gameCode: gameCode, gameTime: Int(gameTime) ?? 0)
+            }
+            .onAppear {
+                observePlayers()
+            }
+            .alert(isPresented: $showError) {
+                Alert(title: Text("Error"), message: Text(errorMessage ?? "Unknown error"), dismissButton: .default(Text("OK")))
+            }
+            .padding()
         }
-        .onAppear {
-            observePlayers()
-        }
-        .padding()
     }
 
     // Function to start the game and navigate to countdown
     private func startGame() {
         guard let minutes = Int(gameTime), minutes > 0 else {
-            print("Invalid time input")
+            errorMessage = "Invalid time input."
+            showError = true
             return
         }
 
-        let gameRef = Database.database().reference().child("games").child(gameCode)
-        let currentTime = Date().timeIntervalSince1970  // Get the current time
+        FirebaseHelper.assignRandomTasks(for: playerName, in: gameCode) { success in
+            if success {
+                print("Tasks assigned successfully.")
+                // Handle success (e.g., update UI or move to the next screen)
+            } else {
+                print("Failed to assign tasks.")
+                // Handle failure (e.g., show an error message)
+            }
+        }
 
-        // Update the game state to "in progress" and set the timer in seconds
+        let gameRef = Database.database().reference().child("games").child(gameCode)
+
+        // Update the game state to "in progress" and set the timer
+        let currentTime = Date().timeIntervalSince1970  // Get the current time
         let updatedGameData: [String: Any] = [
             "gameState": "in progress",
             "timer": minutes * 60,  // Convert minutes to seconds
@@ -279,10 +207,11 @@ struct StartGameView: View {
 
         gameRef.updateChildValues(updatedGameData) { error, _ in
             if let error = error {
-                print("Error starting game: \(error.localizedDescription)")
+                self.errorMessage = "Error starting game: \(error.localizedDescription)"
+                self.showError = true
             } else {
                 print("Game \(gameCode) started with \(minutes) minutes.")
-                self.isNavigating = true  // Navigate to the countdown view
+                path.append(gameCode)  // Push the gameCode onto the navigation stack
             }
         }
     }
@@ -304,6 +233,7 @@ struct StartGameView: View {
         }
     }
 }
+
 
 
 struct JoinGameView: View {
@@ -683,9 +613,4 @@ struct GameCountdownView: View {
     }
 }
 
-
-
-#Preview {
-    HomeView()
-}
 
