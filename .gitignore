@@ -4,4 +4,4 @@ __pycache__/
 .DS_Store
 venv/
 firestore-key.json
-GoogleService-info
+Mission/Mission/GoogleService-info
