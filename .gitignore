@@ -1,3 +1,4 @@
 tasks.py
 venv
+*.xcuserstate
 **/GoogleService-Info.plist
