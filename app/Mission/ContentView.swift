@@ -10,8 +10,6 @@ import FirebaseDatabase
 import UserNotifications
 import UIKit
 
-
-
 let darksandybrown = Color(red: 234/255, green: 230/255, blue: 212/255)
 let lightsandybrown = Color(red: 244/255, green: 240/255, blue: 242/255)
 
