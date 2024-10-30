@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>API_KEY</key>
+	<string>AIzaSyCoC_sSOg2MmKK-CsdvvbgFvkb01CVPB9c</string>
+	<key>GCM_SENDER_ID</key>
+	<string>998195687946</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>DollyBelcher.Mission</string>
+	<key>PROJECT_ID</key>
+	<string>mission-5a720</string>
+	<key>STORAGE_BUCKET</key>
+	<string>mission-5a720.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:998195687946:ios:d0a5cce81ce4430c4ee5f3</string>
+	<key>DATABASE_URL</key>
+	<string>https://mission-5a720-default-rtdb.firebaseio.com</string>
+</dict>
+</plist>
